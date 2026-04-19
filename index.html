@@ -180,7 +180,7 @@ const user = tg.initDataUnsafe.user;
 
 if (user) {
   userId = user.id;
-  document.getElementById("username").innerText = user.first_name;
+  document.getElementById("@flortikNft").innerText = user.first_name;
 
   document.getElementById("avatar").src =
     user.photo_url || "https://i.pravatar.cc/100";
@@ -214,7 +214,7 @@ function closeModal() {
 
 // TON оплата
 function payTON() {
-  const wallet = "ТВОЙ_TON_АДРЕС";
+  const wallet = "ТUQD8XCmkTv7z7fSLWCr5JE74CinzLA5sWBYHW3eOj8NlXq3u";
   const amount = 0.1;
 
   const url = `https://app.tonkeeper.com/transfer/${wallet}?amount=${amount * 1e9}&text=user_${userId}`;
