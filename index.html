@@ -1,176 +1,15 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-<style>
-body {
-  margin: 0;
-  background: linear-gradient(to bottom, #000, #111);
-  color: white;
-  font-family: Arial;
-}
-
-/* верхняя панель */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 16px;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(255,255,255,0.2);
-}
-
-/* правая часть */
-.top-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.gift-btn {
-  padding: 8px 14px;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #a855f7, #6366f1);
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.balance {
-  padding: 8px 12px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-}
-
-/* заголовок */
-.header {
-  padding: 0 20px;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-/* контент */
-.content {
-  padding: 20px;
-  font-size: 16px;
-}
-
-/* кнопка */
-.play-btn {
-  margin: 20px;
-  padding: 16px;
-  border-radius: 20px;
-  text-align: center;
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* стеклянный бар */
-.nav {
-  position: fixed;
-  bottom: 20px;
-  left: 16px;
-  right: 16px;
-
-  display: flex;
-  justify-content: space-around;
-
-  padding: 12px;
-
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-
-  border-radius: 30px;
-}
-
-/* кнопки */
-.btn {
-  color: #888;
-  text-align: center;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.btn span {
-  font-size: 22px;
-  display: block;
-}
-
-.btn.active {
-  color: white;
-}
-</style>
-</head>
-
-<body>
-
-<!-- 🔝 ВЕРХ -->
-<div class="topbar">
-  <div class="user-info">
-    <img id="avatar" class="avatar">
-    <span id="username">User</span>
-  </div>
-
-  <div class="top-actions">
-    <div class="gift-btn" onclick="sendGift()">🎁 Внести</div>
-    <div class="balance">💎 0</div>
-  </div>
-</div>
-
-<div class="header">Arena Tournament</div>
-
-<div class="play-btn" onclick="playArena()">
-  ▶ Play Arena
-</div>
-
-<div id="content" class="content">
-  🛒 Здесь будет маркет
-</div>
-
-<!-- 🔻 НИЖНИЙ БАР -->
-<div class="nav">
-  <div class="btn active" onclick="openTab('market', this)">
-    <span>🏪</span>
-    Market
-  </div>
-
-  <div class="btn" onclick="openTab('games', this)">
-    <span>🎮</span>
-    Games
-  </div>
-
-  <div class="btn" onclick="openTab('gifts', this)">
-    <span>🎁</span>
-    Gifts
-  </div>
-</div>
-
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
+
+let userId = null;
 
 // 👤 Telegram user
 const user = tg.initDataUnsafe.user;
 
 if (user) {
+  userId = user.id;
+
   document.getElementById("username").innerText = user.first_name;
 
   if (user.photo_url) {
@@ -180,13 +19,55 @@ if (user) {
   }
 }
 
-// 🎁 отправка сигнала боту
-function sendGift() {
-  tg.sendData("deposit_gift");
+// 🔥 ТВОЙ API (вставь Railway URL)
+const API_URL = "https://ТВОЙ-RAILWAY-URL.up.railway.app";
+
+// 🔄 загрузка профиля (баланс + NFT)
+async function loadProfile() {
+  if (!userId) return;
+
+  try {
+    const res = await fetch(API_URL + "/profile?user_id=" + userId);
+    const data = await res.json();
+
+    // баланс
+    document.querySelector(".balance").innerHTML = "💎 " + data.balance;
+
+    // если вкладка gifts — показываем NFT
+    if (currentTab === "gifts") {
+      if (data.nfts.length === 0) {
+        document.getElementById("content").innerHTML = "😢 NFT нет";
+      } else {
+        document.getElementById("content").innerHTML =
+          "🎁 NFT:<br><br>" + data.nfts.join("<br>");
+      }
+    }
+
+  } catch (e) {
+    console.log("Ошибка загрузки:", e);
+  }
 }
 
-// переключение вкладок
+// 🔁 авто обновление
+setInterval(loadProfile, 5000);
+loadProfile();
+
+// 🎁 ОПЛАТА TON (РЕАЛЬНАЯ)
+function sendGift() {
+  const wallet = "ТВОЙ_TON_АДРЕС"; // вставь свой
+  const amount = 0.1;
+
+  const url = `https://app.tonkeeper.com/transfer/${wallet}?amount=${amount * 1e9}&text=user_${userId}`;
+
+  window.open(url, "_blank");
+}
+
+// 📂 вкладки
+let currentTab = "market";
+
 function openTab(tab, el) {
+  currentTab = tab;
+
   document.querySelectorAll(".btn").forEach(btn => {
     btn.classList.remove("active");
   });
@@ -204,15 +85,12 @@ function openTab(tab, el) {
   }
 
   if (tab === "gifts") {
-    content.innerHTML = "🎁 Здесь будут NFT";
+    loadProfile(); // сразу загрузка NFT
   }
 }
 
-// кнопка Play
+// ▶ кнопка
 function playArena() {
   alert("🚀 Игра скоро будет!");
 }
 </script>
-
-</body>
-</html>
