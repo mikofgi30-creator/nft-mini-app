@@ -2,49 +2,75 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>NFT Case</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFT Bot</title>
+
   <style>
     body {
+      margin: 0;
+      font-family: Arial, sans-serif;
       background: #0f172a;
       color: white;
-      font-family: Arial;
       text-align: center;
-      padding: 20px;
     }
+
+    .container {
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #94a3b8;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+
     button {
-      padding: 15px;
-      font-size: 18px;
-      border-radius: 10px;
+      background: #6366f1;
       border: none;
-      background: #22c55e;
+      padding: 15px 25px;
+      border-radius: 12px;
       color: white;
-      margin-top: 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #4f46e5;
     }
   </style>
 </head>
+
 <body>
+  <div class="container">
+    <h1>🚀 NFT Bot</h1>
+    <p>Добро пожаловать в мини-приложение</p>
 
-<h1>🎁 NFT Кейс</h1>
-<p>Нажми кнопку, чтобы открыть</p>
+    <div class="card">
+      <h2>💎 NFT Balance</h2>
+      <p id="balance">0 NFT</p>
+    </div>
 
-<button onclick="openCase()">Открыть кейс</button>
+    <button onclick="addNFT()">Получить NFT</button>
+  </div>
 
-<h2 id="result"></h2>
+  <script>
+    let balance = 0;
 
-<script>
-function openCase() {
-  let r = Math.random() * 100;
-  let result = "";
-
-  if (r < 70) result = "🟢 Common NFT";
-  else if (r < 95) result = "🔵 Rare NFT";
-  else if (r < 99) result = "🟣 Epic NFT";
-  else result = "🟡 Legendary NFT";
-
-  document.getElementById("result").innerText = result;
-}
-</script>
-
+    function addNFT() {
+      balance++;
+      document.getElementById("balance").innerText = balance + " NFT";
+    }
+  </script>
 </body>
 </html>
