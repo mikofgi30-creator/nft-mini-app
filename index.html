@@ -14,69 +14,61 @@ body {
   font-family: Arial;
 }
 
+/* 🔝 TOP */
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 16px;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  padding: 15px;
 }
 
 .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(255,255,255,0.2);
 }
 
-.top-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.gift-btn {
-  padding: 8px 14px;
-  border-radius: 20px;
-  background: linear-gradient(90deg, #a855f7, #6366f1);
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.balance {
-  padding: 8px 12px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-}
-
-.header {
-  padding: 0 20px;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.content {
+.wallet-box {
+  margin: 15px;
   padding: 20px;
-  font-size: 16px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
 }
 
-.play-btn {
-  margin: 20px;
-  padding: 16px;
+/* кнопки */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 10px;
   border-radius: 20px;
   text-align: center;
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
-  font-weight: bold;
-  cursor: pointer;
+  background: rgba(255,255,255,0.2);
 }
 
+/* контент */
+.content {
+  padding: 15px;
+}
+
+/* NFT карточка */
+.nft {
+  background: #111;
+  padding: 10px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+}
+
+.nft img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* нижний бар */
 .nav {
   position: fixed;
   bottom: 20px;
@@ -94,73 +86,63 @@ body {
   color: #888;
   text-align: center;
   font-size: 12px;
-  cursor: pointer;
-}
-
-.btn span {
-  font-size: 22px;
-  display: block;
 }
 
 .btn.active {
   color: white;
 }
 
-/* МОДАЛКА */
+/* модалка */
 .modal {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   background: #111;
-  border-radius: 20px 20px 0 0;
   padding: 20px;
   display: none;
+  border-radius: 20px 20px 0 0;
 }
 </style>
 </head>
 
 <body>
 
+<!-- 🔝 TOP -->
 <div class="topbar">
-  <div class="user-info">
-    <img id="avatar" class="avatar">
-    <span id="username">User</span>
-  </div>
+  <img id="avatar" class="avatar">
+  <div id="username">User</div>
+</div>
 
-  <div class="top-actions">
-    <div class="gift-btn" onclick="openDeposit()">🎁 Внести</div>
-    <div class="balance" id="balance">💎 0</div>
+<!-- 💎 WALLET -->
+<div class="wallet-box">
+  <div>Wallet not connected</div>
+  <h1 id="balance">0 TON</h1>
+
+  <div class="actions">
+    <div class="action-btn" onclick="openDeposit()">Deposit</div>
+    <div class="action-btn">Withdraw</div>
   </div>
 </div>
 
-<div class="header">Arena Tournament</div>
+<!-- 📦 КОНТЕНТ -->
+<div id="content" class="content"></div>
 
-<div class="play-btn" onclick="playArena()">▶ Play Arena</div>
-
-<div id="content" class="content">🛒 Здесь будет маркет</div>
-
+<!-- 🔻 NAV -->
 <div class="nav">
-  <div class="btn active" onclick="openTab('market', this)">
-    <span>🏪</span>Market
-  </div>
-  <div class="btn" onclick="openTab('games', this)">
-    <span>🎮</span>Games
-  </div>
-  <div class="btn" onclick="openTab('gifts', this)">
-    <span>🎁</span>Gifts
-  </div>
+  <div class="btn active" onclick="openTab('market', this)">🏪</div>
+  <div class="btn" onclick="openTab('profile', this)">👤</div>
 </div>
 
-<!-- 💰 МОДАЛКА -->
+<!-- 💰 MODAL -->
 <div id="modal" class="modal">
-  <div style="text-align:center; margin-bottom:15px;">Пополнение</div>
+  <h3>Пополнение</h3>
 
-  <div onclick="payTON()" style="padding:12px;background:#0072ff;border-radius:10px;margin-bottom:10px;text-align:center;">
+  <div onclick="payTON()" class="action-btn">
     💎 Пополнить TON
   </div>
 
-  <div onclick="sendNFT()" style="padding:12px;background:#a855f7;border-radius:10px;text-align:center;">
+  <div onclick="sendNFT()" class="action-btn" style="margin-top:10px;">
     🎁 NFT подарок
   </div>
 
@@ -175,46 +157,83 @@ tg.expand();
 
 let userId = null;
 
-// пользователь
+// 👤 USER
 const user = tg.initDataUnsafe.user;
 
 if (user) {
   userId = user.id;
-  document.getElementById("@flortikNft").innerText = user.first_name;
-
+  document.getElementById("username").innerText = user.first_name;
   document.getElementById("avatar").src =
     user.photo_url || "https://i.pravatar.cc/100";
 }
 
-// API
+// ⚡ API (вставь свой Railway)
 const API = "https://ТВОЙ-RAILWAY-URL.up.railway.app";
 
-// загрузка баланса
+// 💎 баланс
 async function loadBalance() {
   if (!userId) return;
 
-  const res = await fetch(API + "/profile?user_id=" + userId);
-  const data = await res.json();
-
-  document.getElementById("balance").innerHTML = "💎 " + data.balance;
+  try {
+    const res = await fetch(API + "/profile?user_id=" + userId);
+    const data = await res.json();
+    document.getElementById("balance").innerText = data.balance + " TON";
+  } catch {}
 }
 
 setInterval(loadBalance, 5000);
 loadBalance();
 
-// открыть модалку
+// 📂 вкладки
+function openTab(tab, el) {
+  document.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
+  el.classList.add("active");
+
+  const content = document.getElementById("content");
+
+  if (tab === "market") {
+    content.innerHTML = `
+      <div class="nft">
+        <img src="https://picsum.photos/200?1">
+        <div>Rare NFT</div>
+        <div>0.2 TON</div>
+      </div>
+
+      <div class="nft">
+        <img src="https://picsum.photos/200?2">
+        <div>Epic NFT</div>
+        <div>0.5 TON</div>
+      </div>
+    `;
+  }
+
+  if (tab === "profile") {
+    content.innerHTML = `
+      <div class="wallet-box">
+        <h2>Balance</h2>
+        <h1 id="profileBalance">${document.getElementById("balance").innerText}</h1>
+
+        <div class="actions">
+          <div class="action-btn" onclick="openDeposit()">Deposit</div>
+          <div class="action-btn">Withdraw</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// 💰 модалка
 function openDeposit() {
   document.getElementById("modal").style.display = "block";
 }
 
-// закрыть
 function closeModal() {
   document.getElementById("modal").style.display = "none";
 }
 
-// TON оплата
+// 💎 TON
 function payTON() {
-  const wallet = "ТUQD8XCmkTv7z7fSLWCr5JE74CinzLA5sWBYHW3eOj8NlXq3u";
+  const wallet = "ТВОЙ_TON_КОШЕЛЕК";
   const amount = 0.1;
 
   const url = `https://app.tonkeeper.com/transfer/${wallet}?amount=${amount * 1e9}&text=user_${userId}`;
@@ -223,28 +242,14 @@ function payTON() {
   closeModal();
 }
 
-// NFT через бота
+// 🎁 NFT
 function sendNFT() {
   tg.sendData("deposit_gift");
   closeModal();
 }
 
-// вкладки
-function openTab(tab, el) {
-  document.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
-  el.classList.add("active");
-
-  const content = document.getElementById("content");
-
-  if (tab === "market") content.innerHTML = "🛒 Маркет";
-  if (tab === "games") content.innerHTML = "🎮 Игры";
-  if (tab === "gifts") content.innerHTML = "🎁 NFT";
-}
-
-// игра
-function playArena() {
-  alert("🚀 Скоро!");
-}
+// старт
+openTab("market", document.querySelector(".btn"));
 </script>
 
 </body>
