@@ -3,126 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NFT Arena</title>
+<title>NFT Market</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 body {
   margin: 0;
-  font-family: Arial;
-  background: linear-gradient(180deg, #1e1b4b, #020617);
+  background: #0f172a;
   color: white;
-}
-
-.card {
-  margin: 20px;
-  background: linear-gradient(180deg, #9333ea, #6b21a8);
-  border-radius: 20px;
-  padding: 20px;
+  font-family: Arial;
   text-align: center;
 }
 
-.card img {
-  width: 120px;
-}
-
-.title {
-  font-size: 24px;
-  margin-top: 10px;
-}
-
-.subtitle {
-  opacity: 0.8;
-  font-size: 14px;
-}
-
-.results {
-  padding: 20px;
-}
-
-.player {
-  display: flex;
-  justify-content: space-between;
-  margin: 10px 0;
-}
-
-.bottom {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+.card {
+  background: #1e293b;
+  margin: 15px;
   padding: 15px;
-  background: #0f172a;
+  border-radius: 12px;
 }
 
-.play-btn {
-  width: 100%;
-  padding: 15px;
-  border-radius: 20px;
+button {
+  padding: 10px;
   border: none;
-  background: linear-gradient(90deg, #a855f7, #9333ea);
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
+  border-radius: 10px;
+  background: #22c55e;
 }
 </style>
-
 </head>
 
 <body>
 
+<h1>🖼 NFT Market</h1>
+<p id="user"></p>
+
 <div class="card">
-  <img src="https://picsum.photos/200" />
-  <div class="title">Арена Турнир</div>
-  <div class="subtitle">
-    Топ-1000 игроков получают NFT и TON
-  </div>
-</div>
-
-<div class="results">
-  <h2>Результаты</h2>
-
-  <div class="player">
-    <span>🥇 user1</span>
-    <span>86 TON</span>
-  </div>
-
-  <div class="player">
-    <span>🥈 user2</span>
-    <span>54 TON</span>
-  </div>
-
-  <div class="player">
-    <span>🥉 user3</span>
-    <span>21 TON</span>
-  </div>
-</div>
-
-<div class="bottom">
-  <button class="play-btn" onclick="play()">Играть в Арену</button>
+  NFT #1 — 1 TON  
+  <br><br>
+  <button onclick="buy()">Купить</button>
 </div>
 
 <script>
-function play() {
-  alert("🚀 Запуск игры...");
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+const user = tg.initDataUnsafe.user;
+
+if (user) {
+  document.getElementById("user").innerText =
+    "👤 " + user.first_name;
+}
+
+async function buy() {
+  const res = await fetch("http://localhost:8000/buy", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      user_id: user.id,
+      nft: "NFT #1"
+    })
+  });
+
+  const data = await res.json();
+  alert(data.message);
 }
 </script>
 
 </body>
 </html>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-<script>
-const tg = window.Telegram.WebApp;
-
-// раскрывает приложение на весь экран
-tg.expand();
-
-// получаем пользователя
-const user = tg.initDataUnsafe.user;
-
-if (user) {
-  document.body.innerHTML += `
-    <p>👤 ${user.first_name}</p>
-  `;
-}
-</script>
