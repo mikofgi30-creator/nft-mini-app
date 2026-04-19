@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>NFT Case</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+      padding: 20px;
+    }
+    button {
+      padding: 15px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: none;
+      background: #22c55e;
+      color: white;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎁 NFT Кейс</h1>
+<p>Нажми кнопку, чтобы открыть</p>
+
+<button onclick="openCase()">Открыть кейс</button>
+
+<h2 id="result"></h2>
+
+<script>
+function openCase() {
+  let r = Math.random() * 100;
+  let result = "";
+
+  if (r < 70) result = "🟢 Common NFT";
+  else if (r < 95) result = "🔵 Rare NFT";
+  else if (r < 99) result = "🟣 Epic NFT";
+  else result = "🟡 Legendary NFT";
+
+  document.getElementById("result").innerText = result;
+}
+</script>
+
+</body>
+</html>
