@@ -9,16 +9,21 @@
 <style>
 body {
   margin: 0;
-  background: radial-gradient(circle at top, #0a0a0a, #000);
+  background: #000;
   color: white;
-  font-family: -apple-system, BlinkMacSystemFont;
+  font-family: -apple-system;
+  overflow-x: hidden;
 }
 
-/* 🔝 TOP */
+/* плавность */
+* {
+  transition: all 0.25s ease;
+}
+
+/* TOP */
 .topbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 16px;
 }
 
@@ -28,60 +33,59 @@ body {
   border-radius: 50%;
 }
 
-/* 💎 WALLET CARD */
+/* стекло */
+.glass {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* WALLET */
 .wallet {
   margin: 15px;
   padding: 18px;
   border-radius: 25px;
-
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-
-  border: 1px solid rgba(255,255,255,0.08);
 }
 
 .wallet h1 {
-  margin: 10px 0;
-  font-size: 32px;
+  font-size: 30px;
 }
 
-/* 🧊 GLASS BUTTON */
-.glass-btn {
+/* кнопки */
+.btn-glass {
   padding: 12px;
-  border-radius: 20px;
+  border-radius: 18px;
   text-align: center;
-
   background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(20px);
-
-  border: 1px solid rgba(255,255,255,0.1);
-
-  transition: 0.2s;
 }
 
-.glass-btn:active {
+.btn-glass:active {
   transform: scale(0.95);
-  background: rgba(255,255,255,0.15);
 }
 
-/* кнопки ряд */
-.actions {
+/* ROW */
+.row {
   display: flex;
   gap: 10px;
 }
 
-/* контент */
-.content {
+/* TABS WRAPPER (свайп) */
+.tabs {
+  display: flex;
+  width: 300%;
+}
+
+.page {
+  width: 100%;
   padding: 15px;
 }
 
-/* NFT карточки */
+/* NFT */
 .card {
-  background: rgba(255,255,255,0.05);
   border-radius: 20px;
   padding: 10px;
   margin-bottom: 10px;
+  background: rgba(255,255,255,0.05);
 }
 
 .card img {
@@ -89,7 +93,7 @@ body {
   border-radius: 15px;
 }
 
-/* 🔻 NAV */
+/* NAV */
 .nav {
   position: fixed;
   bottom: 20px;
@@ -107,16 +111,30 @@ body {
   border-radius: 30px;
 }
 
-.btn {
-  text-align: center;
+.nav div {
   color: #888;
 }
 
-.btn.active {
+.nav .active {
   color: white;
 }
 
-/* 💰 MODAL */
+/* skeleton */
+.skeleton {
+  height: 80px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #111, #222, #111);
+  animation: loading 1.2s infinite;
+}
+
+@keyframes loading {
+  0% {opacity: 0.5;}
+  50% {opacity: 1;}
+  100% {opacity: 0.5;}
+}
+
+/* MODAL */
 .modal {
   position: fixed;
   bottom: 0;
@@ -136,43 +154,44 @@ body {
 
 <body>
 
-<!-- 🔝 -->
 <div class="topbar">
   <img id="avatar" class="avatar">
   <div id="username">User</div>
 </div>
 
-<!-- 💎 WALLET -->
-<div class="wallet">
-  <div>Wallet</div>
+<div class="wallet glass">
+  <div>Balance</div>
   <h1 id="balance">0 TON</h1>
 
-  <div class="actions">
-    <div class="glass-btn" onclick="openDeposit()">Deposit</div>
-    <div class="glass-btn">Withdraw</div>
+  <div class="row">
+    <div class="btn-glass" onclick="openDeposit()">Deposit</div>
+    <div class="btn-glass">Withdraw</div>
   </div>
 </div>
 
-<!-- 📦 CONTENT -->
-<div id="content" class="content"></div>
+<!-- СВАЙП КОНТЕЙНЕР -->
+<div id="tabs" class="tabs">
 
-<!-- 🔻 NAV -->
-<div class="nav">
-  <div class="btn active" onclick="openTab('market', this)">🏪</div>
-  <div class="btn" onclick="openTab('profile', this)">👤</div>
+  <!-- MARKET -->
+  <div class="page" id="market"></div>
+
+  <!-- PROFILE -->
+  <div class="page" id="profile"></div>
+
 </div>
 
-<!-- 💰 MODAL -->
+<!-- NAV -->
+<div class="nav">
+  <div class="active" onclick="goTab(0)">🏪</div>
+  <div onclick="goTab(1)">👤</div>
+</div>
+
+<!-- MODAL -->
 <div id="modal" class="modal">
   <h3>Пополнение</h3>
 
-  <div class="glass-btn" onclick="payTON()">
-    💎 TON
-  </div>
-
-  <div class="glass-btn" style="margin-top:10px;" onclick="sendNFT()">
-    🎁 NFT
-  </div>
+  <div class="btn-glass" onclick="payTON()">💎 TON</div>
+  <div class="btn-glass" style="margin-top:10px;" onclick="sendNFT()">🎁 NFT</div>
 
   <div style="margin-top:10px;text-align:center;color:#888;" onclick="closeModal()">
     Закрыть
@@ -184,42 +203,33 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 let userId = null;
+let currentTab = 0;
 
-// 👤 USER
 const user = tg.initDataUnsafe.user;
 
 if (user) {
   userId = user.id;
-  document.getElementById("username").innerText = user.first_name;
-  document.getElementById("avatar").src =
-    user.photo_url || "https://i.pravatar.cc/100";
+  username.innerText = user.first_name;
+  avatar.src = user.photo_url || "https://i.pravatar.cc/100";
 }
 
-// 💰 API
+// API
 const API = "https://ТВОЙ-RAILWAY-URL";
 
-// баланс
-async function loadBalance() {
-  if (!userId) return;
-
-  const res = await fetch(API + "/profile?user_id=" + userId);
-  const data = await res.json();
-
-  document.getElementById("balance").innerText = data.balance + " TON";
+// skeleton загрузка
+function showSkeleton() {
+  market.innerHTML = `
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  `;
 }
 
-setInterval(loadBalance, 5000);
-loadBalance();
+// загрузка NFT
+function loadMarket() {
+  showSkeleton();
 
-// вкладки
-function openTab(tab, el) {
-  document.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
-  el.classList.add("active");
-
-  const content = document.getElementById("content");
-
-  if (tab === "market") {
-    content.innerHTML = `
+  setTimeout(() => {
+    market.innerHTML = `
       <div class="card">
         <img src="https://picsum.photos/200?1">
         <div>Rare NFT</div>
@@ -232,53 +242,91 @@ function openTab(tab, el) {
         <div>0.5 TON</div>
       </div>
     `;
-  }
-
-  if (tab === "profile") {
-    content.innerHTML = `
-      <div class="wallet">
-        <h2>Balance</h2>
-        <h1>${document.getElementById("balance").innerText}</h1>
-
-        <div class="actions">
-          <div class="glass-btn" onclick="openDeposit()">Deposit</div>
-          <div class="glass-btn">Withdraw</div>
-        </div>
-      </div>
-    `;
-  }
+  }, 800);
 }
 
-// модалка
+// профиль
+function loadProfile() {
+  profile.innerHTML = `
+    <div class="wallet glass">
+      <h2>Balance</h2>
+      <h1>${balance.innerText}</h1>
+
+      <div class="row">
+        <div class="btn-glass" onclick="openDeposit()">Deposit</div>
+        <div class="btn-glass">Withdraw</div>
+      </div>
+    </div>
+  `;
+}
+
+// переключение
+function goTab(index) {
+  currentTab = index;
+
+  document.querySelector(".tabs").style.transform =
+    "translateX(-" + (index * 100) + "%)";
+
+  document.querySelectorAll(".nav div").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".nav div")[index].classList.add("active");
+
+  if (index === 0) loadMarket();
+  if (index === 1) loadProfile();
+}
+
+// свайп
+let startX = 0;
+
+document.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchend", e => {
+  let dx = e.changedTouches[0].clientX - startX;
+
+  if (dx < -50 && currentTab < 1) goTab(currentTab + 1);
+  if (dx > 50 && currentTab > 0) goTab(currentTab - 1);
+});
+
+// баланс
+async function loadBalance() {
+  if (!userId) return;
+
+  try {
+    let res = await fetch(API + "/profile?user_id=" + userId);
+    let data = await res.json();
+    balance.innerText = data.balance + " TON";
+  } catch {}
+}
+
+setInterval(loadBalance, 5000);
+loadBalance();
+
+// modal
 function openDeposit() {
-  document.getElementById("modal").style.display = "block";
+  modal.style.display = "block";
 }
 
 function closeModal() {
-  document.getElementById("modal").style.display = "none";
+  modal.style.display = "none";
 }
 
 // TON
 function payTON() {
-  const wallet = "ТВОЙ_TON_КОШЕЛЕК";
-  const amount = 0.1;
-
-  window.open(
-    `https://app.tonkeeper.com/transfer/${wallet}?amount=${amount * 1e9}&text=user_${userId}`
-  );
-
-  closeModal();
+  window.open("https://app.tonkeeper.com/");
 }
 
 // NFT
 function sendNFT() {
   tg.sendData("deposit_gift");
-  closeModal();
 }
 
 // старт
-openTab("market", document.querySelector(".btn"));
+goTab(0);
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
