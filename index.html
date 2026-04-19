@@ -6,327 +6,37 @@
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<style>
-body {
-  margin: 0;
-  background: #000;
-  color: white;
-  font-family: -apple-system;
-  overflow-x: hidden;
-}
-
-/* плавность */
-* {
-  transition: all 0.25s ease;
-}
-
-/* TOP */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  padding: 16px;
-}
-
-.avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-}
-
-/* стекло */
-.glass {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(30px);
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-/* WALLET */
-.wallet {
-  margin: 15px;
-  padding: 18px;
-  border-radius: 25px;
-}
-
-.wallet h1 {
-  font-size: 30px;
-}
-
-/* кнопки */
-.btn-glass {
-  padding: 12px;
-  border-radius: 18px;
-  text-align: center;
-  background: rgba(255,255,255,0.08);
-}
-
-.btn-glass:active {
-  transform: scale(0.95);
-}
-
-/* ROW */
-.row {
-  display: flex;
-  gap: 10px;
-}
-
-/* TABS WRAPPER (свайп) */
-.tabs {
-  display: flex;
-  width: 300%;
-}
-
-.page {
-  width: 100%;
-  padding: 15px;
-}
-
-/* NFT */
-.card {
-  border-radius: 20px;
-  padding: 10px;
-  margin-bottom: 10px;
-  background: rgba(255,255,255,0.05);
-}
-
-.card img {
-  width: 100%;
-  border-radius: 15px;
-}
-
-/* NAV */
-.nav {
-  position: fixed;
-  bottom: 20px;
-  left: 16px;
-  right: 16px;
-
-  display: flex;
-  justify-content: space-around;
-
-  padding: 12px;
-
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(30px);
-
-  border-radius: 30px;
-}
-
-.nav div {
-  color: #888;
-}
-
-.nav .active {
-  color: white;
-}
-
-/* skeleton */
-.skeleton {
-  height: 80px;
-  border-radius: 15px;
-  margin-bottom: 10px;
-  background: linear-gradient(90deg, #111, #222, #111);
-  animation: loading 1.2s infinite;
-}
-
-@keyframes loading {
-  0% {opacity: 0.5;}
-  50% {opacity: 1;}
-  100% {opacity: 0.5;}
-}
-
-/* MODAL */
-.modal {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  background: rgba(20,20,20,0.95);
-  backdrop-filter: blur(30px);
-
-  padding: 20px;
-  display: none;
-
-  border-radius: 25px 25px 0 0;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- 🔝 TOP -->
 <div class="topbar">
   <img id="avatar" class="avatar">
   <div id="username">User</div>
 </div>
 
-<div class="wallet glass">
+<!-- 💎 WALLET -->
+<div class="wallet">
   <div>Balance</div>
   <h1 id="balance">0 TON</h1>
 
   <div class="row">
-    <div class="btn-glass" onclick="openDeposit()">Deposit</div>
-    <div class="btn-glass">Withdraw</div>
+    <div class="btn" onclick="openDeposit()">Deposit</div>
+    <div class="btn">Withdraw</div>
   </div>
 </div>
 
-<!-- СВАЙП КОНТЕЙНЕР -->
-<div id="tabs" class="tabs">
+<!-- 📦 CONTENT -->
+<div id="content" class="content"></div>
 
-  <!-- MARKET -->
-  <div class="page" id="market"></div>
-
-  <!-- PROFILE -->
-  <div class="page" id="profile"></div>
-
-</div>
-
-<!-- NAV -->
+<!-- 🔻 NAV -->
 <div class="nav">
-  <div class="active" onclick="goTab(0)">🏪</div>
-  <div onclick="goTab(1)">👤</div>
+  <div class="nav-btn active" onclick="openTab('market', this)">🏪</div>
+  <div class="nav-btn" onclick="openTab('profile', this)">👤</div>
 </div>
 
-<!-- MODAL -->
-<div id="modal" class="modal">
-  <h3>Пополнение</h3>
-
-  <div class="btn-glass" onclick="payTON()">💎 TON</div>
-  <div class="btn-glass" style="margin-top:10px;" onclick="sendNFT()">🎁 NFT</div>
-
-  <div style="margin-top:10px;text-align:center;color:#888;" onclick="closeModal()">
-    Закрыть
-  </div>
-</div>
-
-<script>
-const tg = window.Telegram.WebApp;
-tg.expand();
-
-let userId = null;
-let currentTab = 0;
-
-const user = tg.initDataUnsafe.user;
-
-if (user) {
-  userId = user.id;
-  username.innerText = user.first_name;
-  avatar.src = user.photo_url || "https://i.pravatar.cc/100";
-}
-
-// API
-const API = "https://ТВОЙ-RAILWAY-URL";
-
-// skeleton загрузка
-function showSkeleton() {
-  market.innerHTML = `
-    <div class="skeleton"></div>
-    <div class="skeleton"></div>
-  `;
-}
-
-// загрузка NFT
-function loadMarket() {
-  showSkeleton();
-
-  setTimeout(() => {
-    market.innerHTML = `
-      <div class="card">
-        <img src="https://picsum.photos/200?1">
-        <div>Rare NFT</div>
-        <div>0.2 TON</div>
-      </div>
-
-      <div class="card">
-        <img src="https://picsum.photos/200?2">
-        <div>Epic NFT</div>
-        <div>0.5 TON</div>
-      </div>
-    `;
-  }, 800);
-}
-
-// профиль
-function loadProfile() {
-  profile.innerHTML = `
-    <div class="wallet glass">
-      <h2>Balance</h2>
-      <h1>${balance.innerText}</h1>
-
-      <div class="row">
-        <div class="btn-glass" onclick="openDeposit()">Deposit</div>
-        <div class="btn-glass">Withdraw</div>
-      </div>
-    </div>
-  `;
-}
-
-// переключение
-function goTab(index) {
-  currentTab = index;
-
-  document.querySelector(".tabs").style.transform =
-    "translateX(-" + (index * 100) + "%)";
-
-  document.querySelectorAll(".nav div").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".nav div")[index].classList.add("active");
-
-  if (index === 0) loadMarket();
-  if (index === 1) loadProfile();
-}
-
-// свайп
-let startX = 0;
-
-document.addEventListener("touchstart", e => {
-  startX = e.touches[0].clientX;
-});
-
-document.addEventListener("touchend", e => {
-  let dx = e.changedTouches[0].clientX - startX;
-
-  if (dx < -50 && currentTab < 1) goTab(currentTab + 1);
-  if (dx > 50 && currentTab > 0) goTab(currentTab - 1);
-});
-
-// баланс
-async function loadBalance() {
-  if (!userId) return;
-
-  try {
-    let res = await fetch(API + "/profile?user_id=" + userId);
-    let data = await res.json();
-    balance.innerText = data.balance + " TON";
-  } catch {}
-}
-
-setInterval(loadBalance, 5000);
-loadBalance();
-
-// modal
-function openDeposit() {
-  modal.style.display = "block";
-}
-
-function closeModal() {
-  modal.style.display = "none";
-}
-
-// TON
-function payTON() {
-  window.open("https://app.tonkeeper.com/");
-}
-
-// NFT
-function sendNFT() {
-  tg.sendData("deposit_gift");
-}
-
-// старт
-goTab(0);
-</script>
-
-</body>
-</html>
-
+<script src="app.js"></script>
 </body>
 </html>
