@@ -21,6 +21,12 @@ body {
   font-weight: bold;
 }
 
+/* контент */
+.content {
+  padding: 20px;
+  font-size: 16px;
+}
+
 /* кнопка */
 .play-btn {
   margin: 20px;
@@ -28,6 +34,7 @@ body {
   border-radius: 20px;
   text-align: center;
   background: linear-gradient(90deg, #00c6ff, #0072ff);
+  font-weight: bold;
 }
 
 /* стеклянный бар */
@@ -44,6 +51,7 @@ body {
 
   background: rgba(255,255,255,0.08);
   backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
 
   border-radius: 30px;
 }
@@ -53,6 +61,7 @@ body {
   color: #888;
   text-align: center;
   font-size: 12px;
+  cursor: pointer;
 }
 
 .btn span {
@@ -70,20 +79,26 @@ body {
 
 <div class="header">Arena Tournament</div>
 
-<div class="play-btn">▶ Play Arena</div>
+<div class="play-btn" onclick="playArena()">
+  ▶ Play Arena
+</div>
+
+<div id="content" class="content">
+  🛒 Здесь будет маркет
+</div>
 
 <div class="nav">
-  <div class="btn active">
+  <div class="btn active" onclick="openTab('market', this)">
     <span>🏪</span>
     Market
   </div>
 
-  <div class="btn">
+  <div class="btn" onclick="openTab('games', this)">
     <span>🎮</span>
     Games
   </div>
 
-  <div class="btn">
+  <div class="btn" onclick="openTab('gifts', this)">
     <span>🎁</span>
     Gifts
   </div>
@@ -92,6 +107,37 @@ body {
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
+
+// переключение вкладок
+function openTab(tab, el) {
+  // убрать active у всех
+  document.querySelectorAll(".btn").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  // добавить active
+  el.classList.add("active");
+
+  // смена контента
+  const content = document.getElementById("content");
+
+  if (tab === "market") {
+    content.innerHTML = "🛒 Здесь будет маркет";
+  }
+
+  if (tab === "games") {
+    content.innerHTML = "🎮 Здесь будут игры";
+  }
+
+  if (tab === "gifts") {
+    content.innerHTML = "🎁 Здесь будут NFT";
+  }
+}
+
+// кнопка Play
+function playArena() {
+  alert("🚀 Игра скоро будет!");
+}
 </script>
 
 </body>
