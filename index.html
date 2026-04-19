@@ -3,121 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NFT Market</title>
+<title>NFT Arena</title>
 
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #0f172a, #020617);
+  font-family: Arial;
+  background: linear-gradient(180deg, #1e1b4b, #020617);
   color: white;
-  text-align: center;
-}
-
-h1 {
-  margin: 20px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  padding: 15px;
 }
 
 .card {
-  background: #1e293b;
-  border-radius: 16px;
-  padding: 15px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  transition: 0.2s;
+  margin: 20px;
+  background: linear-gradient(180deg, #9333ea, #6b21a8);
+  border-radius: 20px;
+  padding: 20px;
+  text-align: center;
 }
 
-.card:hover {
-  transform: scale(1.05);
+.card img {
+  width: 120px;
 }
 
-.img {
+.title {
+  font-size: 24px;
+  margin-top: 10px;
+}
+
+.subtitle {
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+.results {
+  padding: 20px;
+}
+
+.player {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.bottom {
+  position: fixed;
+  bottom: 0;
   width: 100%;
-  height: 120px;
-  border-radius: 12px;
-  background-size: cover;
-  background-position: center;
+  padding: 15px;
+  background: #0f172a;
 }
 
-.price {
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-button {
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 10px;
+.play-btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 20px;
   border: none;
-  background: linear-gradient(90deg, #22c55e, #4ade80);
-  color: black;
+  background: linear-gradient(90deg, #a855f7, #9333ea);
+  color: white;
+  font-size: 16px;
   font-weight: bold;
-  cursor: pointer;
-}
-
-.balance {
-  margin: 10px;
-  font-size: 18px;
 }
 </style>
 
 </head>
+
 <body>
 
-<h1>🖼 NFT Market</h1>
-<div class="balance">💰 Баланс: <span id="balance">5</span> TON</div>
+<div class="card">
+  <img src="https://picsum.photos/200" />
+  <div class="title">Арена Турнир</div>
+  <div class="subtitle">
+    Топ-1000 игроков получают NFT и TON
+  </div>
+</div>
 
-<div class="grid">
+<div class="results">
+  <h2>Результаты</h2>
 
-  <div class="card">
-    <div class="img" style="background-image:url('https://picsum.photos/200?1')"></div>
-    <h3>NFT #1</h3>
-    <div class="price">1 TON</div>
-    <button onclick="buy(1)">Купить</button>
+  <div class="player">
+    <span>🥇 user1</span>
+    <span>86 TON</span>
   </div>
 
-  <div class="card">
-    <div class="img" style="background-image:url('https://picsum.photos/200?2')"></div>
-    <h3>NFT #2</h3>
-    <div class="price">2 TON</div>
-    <button onclick="buy(2)">Купить</button>
+  <div class="player">
+    <span>🥈 user2</span>
+    <span>54 TON</span>
   </div>
 
-  <div class="card">
-    <div class="img" style="background-image:url('https://picsum.photos/200?3')"></div>
-    <h3>NFT #3</h3>
-    <div class="price">3 TON</div>
-    <button onclick="buy(3)">Купить</button>
+  <div class="player">
+    <span>🥉 user3</span>
+    <span>21 TON</span>
   </div>
+</div>
 
-  <div class="card">
-    <div class="img" style="background-image:url('https://picsum.photos/200?4')"></div>
-    <h3>NFT #4</h3>
-    <div class="price">4 TON</div>
-    <button onclick="buy(4)">Купить</button>
-  </div>
-
+<div class="bottom">
+  <button class="play-btn" onclick="play()">Играть в Арену</button>
 </div>
 
 <script>
-let balance = 5;
-
-function buy(price) {
-  if (balance >= price) {
-    balance -= price;
-    document.getElementById("balance").innerText = balance;
-    alert("🎉 NFT куплен!");
-  } else {
-    alert("❌ Недостаточно TON");
-  }
+function play() {
+  alert("🚀 Запуск игры...");
 }
 </script>
 
 </body>
 </html>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<script>
+const tg = window.Telegram.WebApp;
+
+// раскрывает приложение на весь экран
+tg.expand();
+
+// получаем пользователя
+const user = tg.initDataUnsafe.user;
+
+if (user) {
+  document.body.innerHTML += `
+    <p>👤 ${user.first_name}</p>
+  `;
+}
+</script>
