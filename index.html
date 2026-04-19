@@ -2,75 +2,44 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NFT Bot</title>
-
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
       background: #0f172a;
       color: white;
+      font-family: Arial;
       text-align: center;
+      padding: 40px;
     }
-
-    .container {
-      padding: 40px 20px;
-    }
-
-    h1 {
-      font-size: 32px;
-      margin-bottom: 10px;
-    }
-
-    p {
-      color: #94a3b8;
-      margin-bottom: 30px;
-    }
-
-    .card {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 16px;
-      margin-bottom: 20px;
-    }
-
     button {
-      background: #6366f1;
-      border: none;
-      padding: 15px 25px;
-      border-radius: 12px;
-      color: white;
+      padding: 10px 20px;
       font-size: 16px;
+      margin-top: 20px;
       cursor: pointer;
-    }
-
-    button:hover {
-      background: #4f46e5;
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <h1>🚀 NFT Bot</h1>
-    <p>Добро пожаловать в мини-приложение</p>
 
-    <div class="card">
-      <h2>💎 NFT Balance</h2>
-      <p id="balance">0 NFT</p>
-    </div>
+  <h1>🚀 Мой NFT сайт</h1>
 
-    <button onclick="addNFT()">Получить NFT</button>
-  </div>
+  <div id="ton-connect"></div>
+
+  <p id="wallet">Кошелек не подключен</p>
 
   <script>
-    let balance = 0;
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+      manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/manifest.json'
+    });
 
-    function addNFT() {
-      balance++;
-      document.getElementById("balance").innerText = balance + " NFT";
-    }
+    tonConnectUI.onStatusChange(wallet => {
+      if (wallet) {
+        document.getElementById("wallet").innerText =
+          "✅ Кошелек: " + wallet.account.address;
+      }
+    });
   </script>
+
 </body>
 </html>
