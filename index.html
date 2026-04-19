@@ -14,9 +14,52 @@ body {
   font-family: Arial;
 }
 
+/* верхняя панель */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+
+/* правая часть */
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gift-btn {
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #a855f7, #6366f1);
+  font-size: 14px;
+}
+
+.balance {
+  padding: 8px 12px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+}
+
 /* заголовок */
 .header {
-  padding: 20px;
+  padding: 0 20px;
   font-size: 22px;
   font-weight: bold;
 }
@@ -77,6 +120,19 @@ body {
 
 <body>
 
+<!-- 🔝 ВЕРХ -->
+<div class="topbar">
+  <div class="user-info">
+    <img id="avatar" class="avatar">
+    <span id="username">User</span>
+  </div>
+
+  <div class="top-actions">
+    <div class="gift-btn">🎁 Внести подарки</div>
+    <div class="balance">💎 0</div>
+  </div>
+</div>
+
 <div class="header">Arena Tournament</div>
 
 <div class="play-btn" onclick="playArena()">
@@ -87,6 +143,7 @@ body {
   🛒 Здесь будет маркет
 </div>
 
+<!-- 🔻 НИЖНИЙ БАР -->
 <div class="nav">
   <div class="btn active" onclick="openTab('market', this)">
     <span>🏪</span>
@@ -108,17 +165,27 @@ body {
 const tg = window.Telegram.WebApp;
 tg.expand();
 
+// 👤 Telegram user
+const user = tg.initDataUnsafe.user;
+
+if (user) {
+  document.getElementById("username").innerText = user.first_name;
+
+  if (user.photo_url) {
+    document.getElementById("avatar").src = user.photo_url;
+  } else {
+    document.getElementById("avatar").src = "https://i.pravatar.cc/100";
+  }
+}
+
 // переключение вкладок
 function openTab(tab, el) {
-  // убрать active у всех
   document.querySelectorAll(".btn").forEach(btn => {
     btn.classList.remove("active");
   });
 
-  // добавить active
   el.classList.add("active");
 
-  // смена контента
   const content = document.getElementById("content");
 
   if (tab === "market") {
