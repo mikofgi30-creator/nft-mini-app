@@ -3,69 +3,95 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NFT Market</title>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 body {
   margin: 0;
-  background: #0f172a;
+  background: linear-gradient(to bottom, #000, #111);
   color: white;
   font-family: Arial;
+}
+
+/* заголовок */
+.header {
+  padding: 20px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* кнопка */
+.play-btn {
+  margin: 20px;
+  padding: 16px;
+  border-radius: 20px;
   text-align: center;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
 }
 
-.card {
-  background: #1e293b;
-  margin: 15px;
-  padding: 15px;
-  border-radius: 12px;
+/* стеклянный бар */
+.nav {
+  position: fixed;
+  bottom: 20px;
+  left: 16px;
+  right: 16px;
+
+  display: flex;
+  justify-content: space-around;
+
+  padding: 12px;
+
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(25px);
+
+  border-radius: 30px;
 }
 
-button {
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: #22c55e;
+/* кнопки */
+.btn {
+  color: #888;
+  text-align: center;
+  font-size: 12px;
+}
+
+.btn span {
+  font-size: 22px;
+  display: block;
+}
+
+.btn.active {
+  color: white;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🖼 NFT Market</h1>
-<p id="user"></p>
+<div class="header">Arena Tournament</div>
 
-<div class="card">
-  NFT #1 — 1 TON  
-  <br><br>
-  <button onclick="buy()">Купить</button>
+<div class="play-btn">▶ Play Arena</div>
+
+<div class="nav">
+  <div class="btn active">
+    <span>🏪</span>
+    Market
+  </div>
+
+  <div class="btn">
+    <span>🎮</span>
+    Games
+  </div>
+
+  <div class="btn">
+    <span>🎁</span>
+    Gifts
+  </div>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
-
-const user = tg.initDataUnsafe.user;
-
-if (user) {
-  document.getElementById("user").innerText =
-    "👤 " + user.first_name;
-}
-
-async function buy() {
-  const res = await fetch("http://localhost:8000/buy", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      user_id: user.id,
-      nft: "NFT #1"
-    })
-  });
-
-  const data = await res.json();
-  alert(data.message);
-}
 </script>
 
 </body>
